@@ -1,4 +1,4 @@
-package cn.brent.validate;
+package cn.brent.commons.validate;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -7,8 +7,8 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import cn.brent.validate.expression.IExpressionLanguage;
-import cn.brent.validate.expression.ExpressionLanguageFactory;
+import cn.brent.commons.validate.expression.ExpressionLanguageFactory;
+import cn.brent.commons.validate.expression.IExpressionLanguage;
 
 public abstract class AbsCheck implements Check {
 	

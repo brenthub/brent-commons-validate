@@ -1,4 +1,4 @@
-# brent-validate
+# brent-commons-validate
 
 以注解方式提供实体认证
 
@@ -9,7 +9,7 @@
 ```xml
 <dependency>
 	<groupId>cn.brent</groupId>
-	<artifactId>brent-validate</artifactId>
+	<artifactId>brent-commons-validate</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
 </dependency>
 ```

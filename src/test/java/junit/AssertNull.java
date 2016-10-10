@@ -6,7 +6,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import cn.brent.validate.ConstraintTarget;
+import cn.brent.commons.validate.ConstraintTarget;
 
 @Documented
 @Retention(RetentionPolicy.RUNTIME)

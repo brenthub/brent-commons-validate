@@ -1,4 +1,4 @@
-package cn.brent.validate;
+package cn.brent.commons.validate;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -12,11 +12,11 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import cn.brent.validate.annotation.AnnotationsConfig;
-import cn.brent.validate.config.IConfigurer;
-import cn.brent.validate.config.FieldConfig;
-import cn.brent.validate.utils.ArrayUtils;
-import cn.brent.validate.utils.ReflectionUtils;
+import cn.brent.commons.validate.annotation.AnnotationsConfig;
+import cn.brent.commons.validate.config.FieldConfig;
+import cn.brent.commons.validate.config.IConfigurer;
+import cn.brent.commons.validate.utils.ArrayUtils;
+import cn.brent.commons.validate.utils.ReflectionUtils;
 
 public class Validator implements IValidate {
 

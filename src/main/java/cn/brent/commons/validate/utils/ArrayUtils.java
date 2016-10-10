@@ -1,4 +1,4 @@
-package cn.brent.validate.utils;
+package cn.brent.commons.validate.utils;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;

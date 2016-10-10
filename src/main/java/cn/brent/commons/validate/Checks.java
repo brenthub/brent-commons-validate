@@ -1,11 +1,11 @@
-package cn.brent.validate;
+package cn.brent.commons.validate;
 
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import cn.brent.validate.config.IConfigurer;
-import cn.brent.validate.config.FieldConfig;
+import cn.brent.commons.validate.config.FieldConfig;
+import cn.brent.commons.validate.config.IConfigurer;
 
 public class Checks {
 

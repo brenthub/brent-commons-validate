@@ -1,4 +1,4 @@
-package cn.brent.validate.annotation;
+package cn.brent.commons.validate.annotation;
 
 import java.lang.annotation.Annotation;
 import java.lang.annotation.Documented;

@@ -5,8 +5,8 @@ import java.util.Map;
 
 import org.junit.Test;
 
-import cn.brent.validate.expression.IExpressionLanguage;
-import cn.brent.validate.expression.ExpressionLanguageFactory;
+import cn.brent.commons.validate.expression.ExpressionLanguageFactory;
+import cn.brent.commons.validate.expression.IExpressionLanguage;
 
 public class ExpressionTest {
 

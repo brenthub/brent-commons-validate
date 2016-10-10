@@ -1,4 +1,4 @@
-package cn.brent.validate.ogn;
+package cn.brent.commons.validate.ogn;
 
 
 public class OGNResult {

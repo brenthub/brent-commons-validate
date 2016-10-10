@@ -1,4 +1,4 @@
-package cn.brent.validate;
+package cn.brent.commons.validate;
 
 import java.util.List;
 

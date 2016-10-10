@@ -1,8 +1,8 @@
-package cn.brent.validate.annotation;
+package cn.brent.commons.validate.annotation;
 
 import java.lang.annotation.Annotation;
 
-import cn.brent.validate.Check;
+import cn.brent.commons.validate.Check;
 
 /**
  * 基于注解的配置

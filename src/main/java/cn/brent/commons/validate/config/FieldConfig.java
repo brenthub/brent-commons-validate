@@ -1,9 +1,9 @@
-package cn.brent.validate.config;
+package cn.brent.commons.validate.config;
 
 import java.lang.reflect.Field;
 import java.util.List;
 
-import cn.brent.validate.Check;
+import cn.brent.commons.validate.Check;
 
 public class FieldConfig {
 

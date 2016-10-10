@@ -1,4 +1,4 @@
-package cn.brent.validate;
+package cn.brent.commons.validate;
 
 /**
  * 校验异常

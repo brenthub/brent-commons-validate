@@ -1,15 +1,15 @@
-package cn.brent.validate.annotation;
+package cn.brent.commons.validate.annotation;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
-import cn.brent.validate.Check;
-import cn.brent.validate.ValidateException;
-import cn.brent.validate.config.ClassConfig;
-import cn.brent.validate.config.IConfigurer;
-import cn.brent.validate.config.FieldConfig;
+import cn.brent.commons.validate.Check;
+import cn.brent.commons.validate.ValidateException;
+import cn.brent.commons.validate.config.ClassConfig;
+import cn.brent.commons.validate.config.FieldConfig;
+import cn.brent.commons.validate.config.IConfigurer;
 
 public class AnnotationsConfig implements IConfigurer {
 

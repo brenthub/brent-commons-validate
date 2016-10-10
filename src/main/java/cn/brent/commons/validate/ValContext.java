@@ -1,4 +1,4 @@
-package cn.brent.validate;
+package cn.brent.commons.validate;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;

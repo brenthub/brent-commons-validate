@@ -1,9 +1,9 @@
-package cn.brent.validate.annotation;
+package cn.brent.commons.validate.annotation;
 
 import java.lang.annotation.Annotation;
 
-import cn.brent.validate.AbsCheck;
-import cn.brent.validate.ConstraintTarget;
+import cn.brent.commons.validate.AbsCheck;
+import cn.brent.commons.validate.ConstraintTarget;
 
 /**
  * 注解抽象基类

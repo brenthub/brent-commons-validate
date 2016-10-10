@@ -1,4 +1,4 @@
-package cn.brent.validate.config;
+package cn.brent.commons.validate.config;
 
 
 /**

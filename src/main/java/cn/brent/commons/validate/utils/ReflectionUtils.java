@@ -1,4 +1,4 @@
-package cn.brent.validate.utils;
+package cn.brent.commons.validate.utils;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AccessibleObject;
@@ -18,7 +18,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import cn.brent.validate.ValidateException;
+import cn.brent.commons.validate.ValidateException;
 
 public class ReflectionUtils {
 
