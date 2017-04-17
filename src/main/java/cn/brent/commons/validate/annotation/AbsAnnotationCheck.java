@@ -2,6 +2,9 @@ package cn.brent.commons.validate.annotation;
 
 import java.lang.annotation.Annotation;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import cn.brent.commons.validate.AbsCheck;
 import cn.brent.commons.validate.ConstraintTarget;
 
@@ -11,9 +14,10 @@ import cn.brent.commons.validate.ConstraintTarget;
  * @param <T>
  */
 public abstract class AbsAnnotationCheck<T extends Annotation> extends AbsCheck implements IAnnotationCheck<T> {
-	
-	
-	public void configure(ConstraintTarget[] appliesTo,String message,String errorCode,int severity,String[] profiles,String target,String when ){
+
+	protected static final Logger logger = LoggerFactory.getLogger(AbsAnnotationCheck.class);
+
+	protected void configure(ConstraintTarget[] appliesTo,String message,String errorCode,int severity,String[] profiles,String target,String when ){
 		setAppliesTo(appliesTo);
 		setMessage(message);
 		setErrorCode(errorCode);
@@ -22,5 +26,5 @@ public abstract class AbsAnnotationCheck<T extends Annotation> extends AbsCheck 
 		setTarget(target);
 		setWhen(when);
 	}
-	
+
 }

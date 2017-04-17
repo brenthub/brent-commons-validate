@@ -12,7 +12,7 @@ public class ExpressionLanguageFactory {
 	}
 	
 	public static void init(){
-		register(new ExpressionLanguageJavaScriptImpl(),"js","javascript");
+		register(new ExpressionLanguageJavaScriptImpl(),"","js","javascript");
 	}
 	
 	public static void register(IExpressionLanguage el,String... langs){

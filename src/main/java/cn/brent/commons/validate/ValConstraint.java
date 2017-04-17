@@ -6,9 +6,8 @@ import java.util.Map;
 public class ValConstraint implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-
-	/** 上下文 */
-	private final ValContext context;
+	
+	private final String field;
 
 	/** 异常码  */
 	private final String errorCode;
@@ -32,7 +31,7 @@ public class ValConstraint implements Serializable {
 	private transient Object validatedObject;
 
 	public ValConstraint(Check check, String message, Object validatedObject, Object invalidValue) {
-		this.context = check.getContext();
+		this.field=check.getField().getName();
 		this.errorCode = check.getErrorCode();
 		this.message = message;
 		this.severity = check.getSeverity();
@@ -40,10 +39,6 @@ public class ValConstraint implements Serializable {
 		this.messageVariables = check.getMessageVariables();
 		this.invalidValue = invalidValue;
 		this.validatedObject = validatedObject;
-	}
-
-	public ValContext getContext() {
-		return context;
 	}
 
 	public String getErrorCode() {
@@ -72,6 +67,15 @@ public class ValConstraint implements Serializable {
 
 	public Object getValidatedObject() {
 		return validatedObject;
+	}
+	
+	public String getField() {
+		return field;
+	}
+	
+	@Override
+	public String toString() {
+		return new StringBuffer("(").append(field).append(")").append(message).append("[").append(errorCode).append("]").toString();
 	}
 
 }

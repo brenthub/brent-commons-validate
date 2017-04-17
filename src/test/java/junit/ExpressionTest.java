@@ -20,29 +20,8 @@ public class ExpressionTest {
 		m.setName("name");
 		p.put("_this", m);
 		//Object n = el.evaluate("_this.name", p);
-		boolean b =el.evaluateAsBoolean("_this.name=='1ame'", p);
+		boolean b =el.evaluateAsBoolean("_this.name=='name'", p);
 		System.out.println(b);
 	}
 
-	public static class Mo {
-		private String id;
-		private String name;
-
-		public String getId() {
-			return id;
-		}
-
-		public void setId(String id) {
-			this.id = id;
-		}
-
-		public String getName() {
-			return name;
-		}
-
-		public void setName(String name) {
-			this.name = name;
-		}
-
-	}
 }

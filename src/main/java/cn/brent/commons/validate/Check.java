@@ -1,12 +1,18 @@
 package cn.brent.commons.validate;
 
 import java.io.Serializable;
+import java.lang.reflect.Field;
 import java.util.Map;
 
 /**
  * 
  */
 public interface Check {
+	
+
+	Field getField();
+	
+	void setField(Field field);
 	
 	/**
 	 * 当为集合时的作用范围
@@ -15,18 +21,6 @@ public interface Check {
 	ConstraintTarget[] getAppliesTo();
 	
 	void setAppliesTo(ConstraintTarget... target);
-
-	/**
-	 * 上下文
-	 * @return
-	 */
-	ValContext getContext();
-	
-	/**
-	 * 上下文
-	 * @param context
-	 */
-	void setContext(ValContext context);
 
 	/**
 	 * 异常码
@@ -91,7 +85,7 @@ public interface Check {
 	 * @param context
 	 * @return
 	 */
-	boolean isSatisfied(Object validatedObject, Object valueToValidate, ValContext context);
+	boolean isSatisfied(Object validatedObject, Object valueToValidate);
 	
 	/**
 	 * 获取异常消息变量（消息模板有占位符）

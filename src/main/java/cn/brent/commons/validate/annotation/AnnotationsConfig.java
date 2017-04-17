@@ -30,7 +30,9 @@ public class AnnotationsConfig implements IConfigurer {
 			for (final Annotation annotation : field.getAnnotations()) {
 				// check if the current annotation is a constraint annotation
 				if (annotation.annotationType().isAnnotationPresent(Constraint.class)) {
-					checks.add(initializeCheck(annotation));
+					Check ck= initializeCheck(annotation);
+					ck.setField(field);
+					checks.add(ck);
 				}
 			}
 

@@ -1,6 +1,7 @@
 package cn.brent.commons.validate;
 
 import java.io.Serializable;
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,8 +14,9 @@ import cn.brent.commons.validate.expression.IExpressionLanguage;
 public abstract class AbsCheck implements Check {
 	
 	protected Logger logger=LoggerFactory.getLogger(getClass());
+	
+	private Field field;
 
-	private ValContext context;
 	private String errorCode;
 	private String message;
 	private Map<String, ? extends Serializable> messageVariables;
@@ -34,7 +36,7 @@ public abstract class AbsCheck implements Check {
 	private transient String whenFormula;
 	/** 表达式语言 */
 	private transient String whenLang;
-
+	
 	@Override
 	public ConstraintTarget[] getAppliesTo() {
 		if (appliesTo == null) {
@@ -46,16 +48,6 @@ public abstract class AbsCheck implements Check {
 	@Override
 	public void setAppliesTo(ConstraintTarget... appliesTo) {
 		this.appliesTo = appliesTo;
-	}
-
-	@Override
-	public ValContext getContext() {
-		return context;
-	}
-
-	@Override
-	public void setContext(ValContext context) {
-		this.context = context;
 	}
 
 	@Override
@@ -112,6 +104,16 @@ public abstract class AbsCheck implements Check {
 	public String getWhen() {
 		return when;
 	}
+	
+	@Override
+	public void setField(Field field) {
+		this.field=field;
+	}
+	
+	@Override
+	public Field getField() {
+		return this.field;
+	}
 
 	@Override
 	public void setWhen(String when) {
@@ -126,8 +128,13 @@ public abstract class AbsCheck implements Check {
 					throw new IllegalArgumentException("[when] is missing the scripting language declaration");
 				}
 				this.when = when;
-				whenLang = parts[0];
-				whenFormula = parts[1];
+				if(parts.length==1){
+					whenLang = "";
+					whenFormula = parts[0];
+				}else{
+					whenLang = parts[0];
+					whenFormula = parts[1];
+				}
 			}
 		}
 	}

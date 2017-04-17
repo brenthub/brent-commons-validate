@@ -1,7 +1,6 @@
 package cn.brent.commons.validate;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -15,19 +14,27 @@ import org.slf4j.LoggerFactory;
 import cn.brent.commons.validate.annotation.AnnotationsConfig;
 import cn.brent.commons.validate.config.FieldConfig;
 import cn.brent.commons.validate.config.IConfigurer;
+import cn.brent.commons.validate.i18n.I18NMsgParser;
+import cn.brent.commons.validate.i18n.MsgParser;
+import cn.brent.commons.validate.ogn.OGNParserRegistry;
+import cn.brent.commons.validate.ogn.OGNResult;
 import cn.brent.commons.validate.utils.ArrayUtils;
 import cn.brent.commons.validate.utils.ReflectionUtils;
 
 public class Validator implements IValidate {
 
-	private final Logger logger = LoggerFactory.getLogger(Validator.class);
+	protected final Logger logger = LoggerFactory.getLogger(Validator.class);
 
 	private final Set<IConfigurer> configurers = new LinkedHashSet<IConfigurer>();
 
 	private final Map<Class<?>, Checks> checksCache = new ConcurrentHashMap<Class<?>, Checks>();
 
+	private final OGNParserRegistry ognRegistry = new OGNParserRegistry();
+	
+	private final MsgParser msgParser=new I18NMsgParser();
+
 	public Validator() {
-		configurers.add(new AnnotationsConfig());
+		this(new AnnotationsConfig());
 	}
 
 	public Validator(final IConfigurer... configurers) {
@@ -37,7 +44,7 @@ public class Validator implements IValidate {
 			}
 		}
 	}
-
+	
 	@Override
 	public void assertValid(Object obj, String... profiles) {
 
@@ -48,34 +55,37 @@ public class Validator implements IValidate {
 		}
 
 		if (checksCache.get(clazz) == null) {
-			checksCache.put(clazz, new Checks(configurers));
+			checksCache.put(clazz, new Checks(clazz, configurers));
 		}
 
 		Checks checks = checksCache.get(clazz);
 
 		for (FieldConfig config : checks.getFieldConfigs()) {
-			final Object value = resolveValue(config.getFiled(), obj);
+			final Object value = ReflectionUtils.getFieldValue(config.getFiled(), obj);
 			for (final Check check : config.getChecks()) {
-				checkConstraint(check, obj, value, profiles, false);
+				ValConstraint cons = checkConstraint(check, obj, value, profiles, false);
+				if(cons!=null){
+					throw new ValidateException(cons.getErrorCode(),cons.getMessage());
+				}
 			}
 		}
 	}
 
-	protected void checkConstraint(final Check check, Object obj, Object value, final String[] profiles, final boolean isContainerValue) {
-		
-		if (!check.isActive(obj, value)){
-			return;
+	protected ValConstraint checkConstraint(final Check check, Object obj, Object value, final String[] profiles, final boolean isContainerValue) {
+
+		if (!check.isActive(obj, value)) {
+			return null;
 		}
 
 		final ConstraintTarget[] targets = check.getAppliesTo();
 
 		if (!isContainerValue) {
 			String target = check.getTarget();
-			if (target != null) {//校验对象下的属性
+			if (target != null) {// 校验对象下的属性
 				target = target.trim();
 				if (target.length() > 0) {
-					if (value == null){
-						return;
+					if (value == null) {
+						return null;
 					}
 					final String[] chunks = target.split(":", 2);
 					final String ognId, path;
@@ -86,86 +96,92 @@ public class Validator implements IValidate {
 						ognId = chunks[0];
 						path = chunks[1];
 					}
-					final ObjectGraphNavigationResult result = ognRegistry.getObjectGraphNavigator(ognId) //
-							.navigateTo(value, path);
-					if (result == null){
-						return;
+					final OGNResult result = ognRegistry.getOGNParser(ognId).navigateTo(value, path);
+					if (result == null) {
+						return null;
 					}
-					obj = result.targetParent;
-					value = result.target;
-					if (result.targetAccessor instanceof Field) {
-						
-					} else {
-						
-					}
+					obj = result.getTargetParent();
+					value = result.getTarget();
 				}
 			}
 		}
 
-		final Class<?> compileTimeType = context.getCompileTimeType();
+		final Class<?> clzType = obj.getClass();
 
-		final boolean isCollection = value != null ? //
-		value instanceof Collection<?>
-				: //
-				Collection.class.isAssignableFrom(compileTimeType);
-		final boolean isMap = !isCollection && //
-				(value != null ? //
-				value instanceof Map<?, ?>
-						: //
-						Map.class.isAssignableFrom(compileTimeType));
-		final boolean isArray = !isCollection && !isMap && //
-				(value != null ? //
-				value.getClass().isArray()
-						: //
-						compileTimeType.isArray());
+		final boolean isCollection = value != null ? value instanceof Collection<?> : Collection.class.isAssignableFrom(clzType);
+		final boolean isMap = !isCollection && (value != null ? value instanceof Map<?, ?> : Map.class.isAssignableFrom(clzType));
+		final boolean isArray = !isCollection && !isMap && (value != null ? value.getClass().isArray() : clzType.isArray());
 		final boolean isContainer = isCollection || isMap || isArray;
 
-		if (isContainer && value != null)
+		if (isContainer && value != null) {
 			if (isCollection) {
 				if (ArrayUtils.containsSame(targets, ConstraintTarget.VALUES)
 						&& (!isContainerValue || ArrayUtils.containsSame(targets, ConstraintTarget.RECURSIVE))) {
 					for (final Object item : (Collection<?>) value) {
-						checkConstraint(violations, check, validatedObject, item, context, profiles, true);
+						checkConstraint(check, obj, item, profiles, true);
 					}
 				}
 			} else if (isMap) {
 				if (ArrayUtils.containsSame(targets, ConstraintTarget.KEYS)
 						&& (!isContainerValue || ArrayUtils.containsSame(targets, ConstraintTarget.RECURSIVE))) {
 					for (final Object item : ((Map<?, ?>) value).keySet()) {
-						checkConstraint(violations, check, validatedObject, item, context, profiles, true);
+						checkConstraint(check, obj, item, profiles, true);
 					}
 				}
 
 				if (ArrayUtils.containsSame(targets, ConstraintTarget.VALUES)
 						&& (!isContainerValue || ArrayUtils.containsSame(targets, ConstraintTarget.RECURSIVE))) {
 					for (final Object item : ((Map<?, ?>) value).values()) {
-						checkConstraint(violations, check, validatedObject, item, context, profiles, true);
+						checkConstraint(check, obj, item, profiles, true);
 					}
 				}
-			} else
-			// array
-			{
+			} else {
 				if (ArrayUtils.containsSame(targets, ConstraintTarget.VALUES)
 						&& (!isContainerValue || ArrayUtils.containsSame(targets, ConstraintTarget.RECURSIVE))) {
 					for (final Object item : ArrayUtils.asList(value)) {
-						checkConstraint(violations, check, validatedObject, item, context, profiles, true);
+						checkConstraint(check, obj, item, profiles, true);
 					}
 				}
 			}
+		}
 
 		if (isContainerValue || !isContainer || isContainer && ArrayUtils.containsSame(targets, ConstraintTarget.CONTAINER)) {
-			_checkConstraint(violations, check, validatedObject, value, context, profiles);
+			if (!check.isSatisfied(obj, value)) {
+				final String errorMessage = msgParser.renderMessage( value, check.getMessage(), check.getMessageVariables());
+				return new ValConstraint(check, errorMessage, obj, value);
+			}
 		}
+		return null;
 	}
 
-	protected Object resolveValue(final Field field, final Object obj) {
-		return ReflectionUtils.getFieldValue(field, obj);
-	}
 
 	@Override
 	public List<ValConstraint> validate(Object obj, String... profiles) {
-		// TODO Auto-generated method stub
-		return null;
+		Class<?> clazz = obj.getClass();
+
+		List<ValConstraint> result=new ArrayList<ValConstraint>(); 
+		
+		if (clazz == Object.class) {
+			return result;
+		}
+
+		if (checksCache.get(clazz) == null) {
+			checksCache.put(clazz, new Checks(clazz, configurers));
+		}
+
+		Checks checks = checksCache.get(clazz);
+
+		for (FieldConfig config : checks.getFieldConfigs()) {
+			final Object value = ReflectionUtils.getFieldValue(config.getFiled(), obj);
+			for (final Check check : config.getChecks()) {
+				ValConstraint cons = checkConstraint(check, obj, value, profiles, false);
+				if(cons!=null){
+					result.add(cons);
+				}
+			}
+		}
+		
+		return result;
 	}
 
 }
